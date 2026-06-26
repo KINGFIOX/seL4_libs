@@ -5,6 +5,7 @@
  */
 
 #include <simple/simple_helpers.h>
+#include <sel4/sel4.h>
 
 bool simple_is_untyped_cap(simple_t *simple, seL4_CPtr pos)
 {
@@ -78,7 +79,9 @@ seL4_CPtr simple_last_valid_cap(simple_t *simple)
 {
     seL4_CPtr largest = 0;
     int i;
-    for (i = 0; i < simple_get_cap_count(simple); i++) {
+    int count;
+    count = simple_get_cap_count(simple);
+    for (i = 0; i < count; i++) {
         seL4_CPtr cap = simple_get_nth_cap(simple, i);
         if (cap > largest) {
             largest = cap;

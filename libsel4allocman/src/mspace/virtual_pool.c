@@ -10,6 +10,7 @@
 #include <stdlib.h>
 #include <sel4/sel4.h>
 #include <sel4utils/mapping.h>
+#include <vka/capops.h>
 #include <vka/kobject_t.h>
 #include <vspace/mapping.h>
 #include <string.h>
@@ -54,12 +55,14 @@ static int _add_page(allocman_t *alloc, seL4_CPtr pd, void *vaddr)
         }
         error = vspace_map_obj(&obj, path.capPtr, pd, (seL4_Word) vaddr, seL4_ARCH_Default_VMAttributes);
         if (error != seL4_NoError) {
+            vka_cnode_delete(&path);
             allocman_utspace_free(alloc, cookie, seL4_PageTableBits);
             allocman_cspace_free(alloc, &path);
             break;
         }
     }
     if (error != seL4_NoError) {
+        vka_cnode_delete(&frame_path);
         allocman_cspace_free(alloc, &frame_path);
         allocman_utspace_free(alloc, frame_cookie, seL4_PageBits);
         return error;
